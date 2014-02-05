@@ -38,6 +38,40 @@
         };
     },
 
+    // Add a dataset to be drawn. You might want to redraw() if you had previeous datasets.
+    addData: function(dataset) {
+        this._data = dataset;
+        this._cache.max = this._calculateMaxValue(dataset);
+    },
+
+    _createTileProto: function () {
+        var proto = this._tileProto = L.DomUtil.create('div', 'leaflet-tile');
+
+        var tileSize = this.options.tileSize;
+        proto.style.width = tileSize+"px";
+        proto.style.height = tileSize+"px";
+        proto.width = tileSize;
+        proto.height = tileSize;
+    },
+
+    _createTile: function () {
+        var tile = this._tileProto.cloneNode(false);
+        tile.onselectstart = tile.onmousemove = L.Util.falseFn;
+
+        var options = this.options;
+        var config = {
+            "radius": options.radius,
+            "element": tile,
+            "visible": true,
+            "opacity": options.opacity * 100,
+            "gradient": options.gradient,
+            "logscale": options.logscale
+        };
+        tile.heatmap = h337.create(config);
+
+        return tile;
+    },
+
     _drawDebugInfo: function (ctx) {
         var canvas = L.DomUtil.create('canvas', 'leaflet-tile-debug');
         var tileSize = this.options.tileSize;
